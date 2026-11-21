@@ -1,0 +1,35 @@
+MANUSACARE VERSI TERPADU TERBARU — DAFTAR KOMPONEN
+
+Backend:
+- config/auth.php, bootstrap/app.php, routes/web.php
+- Auth dua guard, migrasi sesi admin lama, logout guard terpisah
+- Validasi identitas NIS/NIP/NIK/ID lainnya dan nomor HP
+- Report workflow, rekomendasi petugas, warning beban kerja
+- Pengelolaan akun reporter/officer oleh admin
+- Progress/tahap perbaikan, akses media yang mendukung dua guard
+- Migrasi verified_at/verified_by, repair_stage, identity_type
+
+Frontend:
+- Seluruh resources/views dari refinement cinematic terbaru
+- Form identitas dan akun dengan pilihan terstruktur dan batas input
+- Form laporan dengan kategori, urgensi, gedung, lantai, ruangan, opsi lainnya
+- Form verifikasi, penugasan rekomendasi, tahap perbaikan, dan progres petugas
+- public/css dan public/js hasil refinement cinematic
+
+Keamanan paket:
+- Tidak menyertakan .env, database.sqlite, data storage privat, atau vendor.
+- Tidak menjalankan migrate:fresh dan tidak menghapus data pengguna.
+
+[2026-11-21] Visual refinement — Aurora Frosted Glass
+- Navbar transforms into a floating frosted-glass pill after scrolling, without changing page layout flow.
+- Added a single sliding liquid-glass active indicator that follows the selected public navigation item and keyboard focus.
+- Refined typography fallback stack toward Aptos / Segoe UI sans-serif for a cleaner, more contemporary interface without adding a font CDN dependency.
+- Refined frosted surfaces, layered lighting, ambient depth-of-field atmosphere, and restrained interaction feedback.
+- Preserved existing page routes, business logic, database structure, and Web Audio SFX engine.
+- Added reduced-motion and small-screen safeguards for the new visual effects.
+
+[2026-11-21] Report form — conditional custom location inputs
+- Building, floor, and room custom text fields are hidden unless the matching dropdown is set to “Lainnya”.
+- Selecting “Lainnya” reveals and requires the relevant input; selecting a standard option hides and disables it.
+- Preserves old input and validation feedback after a failed submission.
+- Keeps the existing server-side validation and stored report location format unchanged.

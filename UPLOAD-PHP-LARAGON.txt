@@ -1,0 +1,16 @@
+PENGATURAN UPLOAD MANUSACARE - LARAGON
+
+Bila unggahan video MP4/MOV besar ditolak oleh PHP sebelum diproses Laravel:
+1. Buka Laragon > Menu > PHP > php.ini.
+2. Cari dan atur:
+   upload_max_filesize = 110M
+   post_max_size = 260M
+   max_file_uploads = 10
+   max_execution_time = 180
+3. Simpan php.ini.
+4. Restart Laragon / web server.
+
+Batas di dalam aplikasi:
+- Foto JPG/JPEG/PNG: maksimal 5 file, 10 MB per file.
+- Video MP4/MOV: maksimal 2 file, 100 MB per file.
+- File yang format atau isi MIME-nya tidak sesuai akan ditolak.

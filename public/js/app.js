@@ -362,6 +362,7 @@
       let indicator = null;
       let activeLink = null;
       let raf = 0;
+      let animateNextUpdate = false;
       if (nav) {
         indicator = nav.querySelector('[data-nav-indicator]');
         if (!indicator) {
@@ -374,14 +375,15 @@
         nav.classList.add('has-indicator');
         activeLink = nav.querySelector('a[aria-current="page"]') || nav.querySelector('a');
         nav.addEventListener('click', (event) => {
+          if (document.body.classList.contains('is-leaving')) return;
           const target = event.target.closest('a[href]');
           if (!target || !nav.contains(target)) return;
           activeLink = target;
-          requestUpdate();
+          requestUpdate(true);
         });
         nav.addEventListener('focusin', (event) => {
           const target = event.target.closest('a[href]');
-          if (target && nav.contains(target)) { activeLink = target; requestUpdate(); }
+          if (target && nav.contains(target)) { activeLink = target; requestUpdate(true); }
         });
         nav.addEventListener('focusout', () => {
           window.setTimeout(() => {
@@ -391,21 +393,35 @@
           }, 0);
         });
       }
-      const moveIndicator = () => {
+      const moveIndicator = (animate = false) => {
         if (!nav || !indicator || !activeLink || window.matchMedia('(max-width: 960px)').matches) return;
         const navRect = nav.getBoundingClientRect();
         const linkRect = activeLink.getBoundingClientRect();
         if (!navRect.width || !linkRect.width) return;
         const left = linkRect.left - navRect.left;
+        const firstPlacement = !indicator.classList.contains('is-positioned');
+        // Layout/font/resize corrections are instant. Only deliberate focus or
+        // click changes animate, preventing a second slide after page boot.
+        if (!animate && !firstPlacement) indicator.style.transition = 'none';
         indicator.style.width = `${linkRect.width}px`;
         indicator.style.transform = `translate3d(${left}px,0,0)`;
+        if (firstPlacement) {
+          void indicator.offsetWidth;
+          indicator.classList.add('is-positioned');
+        } else if (!animate) {
+          void indicator.offsetWidth;
+          indicator.style.removeProperty('transition');
+        }
       };
       const update = () => {
         raf = 0;
         header.classList.toggle('is-scrolled', window.scrollY > 24);
-        moveIndicator();
+        const shouldAnimate = animateNextUpdate;
+        animateNextUpdate = false;
+        moveIndicator(shouldAnimate);
       };
-      const requestUpdate = () => {
+      const requestUpdate = (animate = false) => {
+        animateNextUpdate = animateNextUpdate || animate;
         if (!raf) raf = window.requestAnimationFrame(update);
       };
       window.addEventListener('scroll', requestUpdate, { passive: true });
@@ -1019,19 +1035,34 @@
       if (url.pathname === window.location.pathname && url.search === window.location.search) return;
       if (state.reducedMotion) return;
 
+      // Ignore repeated clicks during an active transition so the liquid pill
+      // cannot be redirected mid-flight or animated more than once per route.
+      if (document.body.classList.contains('is-leaving')) {
+        event.preventDefault();
+        return;
+      }
+
       event.preventDefault();
+      const desktopNavLink = Boolean(link.closest('[data-site-nav] nav') && !window.matchMedia('(max-width: 960px)').matches);
+      document.body.classList.toggle('is-nav-leaving', desktopNavLink);
       document.body.classList.add('is-leaving');
       window.clearTimeout(state.pageTransitionTimer);
+      // On desktop navbar navigation, let the pill's single 560ms movement and
+      // the page fade-out run together. Other links retain the quick exit.
+      const navigationDelay = desktopNavLink ? 560 : 180;
       state.pageTransitionTimer = window.setTimeout(() => {
         window.location.assign(url.href);
-      }, 145);
+      }, navigationDelay);
 
       // Safety net: never leave the interface faded if navigation is blocked.
-      window.setTimeout(() => document.body.classList.remove('is-leaving'), 1200);
+      window.setTimeout(() => {
+        document.body.classList.remove('is-leaving', 'is-nav-leaving');
+      }, 1400);
     });
 
     window.addEventListener('pageshow', () => {
       MC.motion.resetPageState();
+      document.body.classList.remove('is-nav-leaving');
       MC.ui.closeNav(false);
     });
   };

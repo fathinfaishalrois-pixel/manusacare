@@ -28,7 +28,9 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pages.css') }}">
     <link rel="stylesheet" href="{{ asset('css/ui.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/page-transitions.css') }}">
     <script defer src="{{ asset('js/app.js') }}"></script>
+    <script type="module" src="{{ asset('js/animation-engine.js') }}"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">Lewati ke konten utama</a>

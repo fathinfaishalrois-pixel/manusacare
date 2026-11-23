@@ -1,0 +1,27 @@
+/* MANUSACARE page navigation polish — additive override only.
+   Existing layout, components, features and navigation logic are preserved. */
+
+main.page-shell {
+  animation: manusacare-page-enter 300ms cubic-bezier(.22, .72, .22, 1) both;
+}
+
+body.is-leaving main.page-shell {
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 240ms cubic-bezier(.22, .72, .22, 1),
+              transform 240ms cubic-bezier(.22, .72, .22, 1);
+}
+
+@keyframes manusacare-page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main.page-shell { animation: none !important; }
+  body.is-leaving main.page-shell {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

@@ -1949,8 +1949,11 @@ body::after { background:radial-gradient(circle,rgba(144,224,239,.18),rgba(3,4,9
   box-shadow:0 1px 0 rgba(255,255,255,.32) inset,0 7px 20px -12px rgba(0,180,216,.8),0 0 22px -15px rgba(144,224,239,.9);
   -webkit-backdrop-filter:blur(18px) saturate(190%); backdrop-filter:blur(18px) saturate(190%);
   transform:translate3d(0,0,0); opacity:0; pointer-events:none;
-  transition:transform 560ms cubic-bezier(.2,.9,.18,1.18),width 460ms var(--ease-out),opacity 180ms ease;
+  transition:none;
   will-change:transform,width;
+}
+.nav-liquid-indicator.is-positioned {
+  transition:transform 560ms cubic-bezier(.22,.72,.18,1),width 560ms cubic-bezier(.22,.72,.18,1),opacity 180ms ease;
 }
 .nav-liquid-indicator::after {
   content:""; position:absolute; inset:1px 14% auto; height:1px;

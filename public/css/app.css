@@ -548,13 +548,17 @@ h4 {
 }
 
 main.page-shell {
-  animation: page-enter 480ms var(--ease-out) both;
+  animation: page-enter 680ms cubic-bezier(.16,1,.3,1) both;
 }
 
 body.is-leaving main.page-shell {
   opacity: 0;
   transform: translateY(-5px);
-  transition: opacity 150ms var(--ease), transform 150ms var(--ease);
+  filter: blur(1px);
+  transition: opacity 180ms cubic-bezier(.4,0,.2,1), transform 180ms cubic-bezier(.4,0,.2,1), filter 180ms cubic-bezier(.4,0,.2,1);
+}
+body.is-nav-leaving main.page-shell {
+  transition: opacity 520ms cubic-bezier(.22,.72,.18,1), transform 520ms cubic-bezier(.22,.72,.18,1), filter 520ms cubic-bezier(.22,.72,.18,1);
 }
 
 .notice-stack {
@@ -1184,11 +1188,13 @@ body.is-leaving main.page-shell {
 @keyframes page-enter {
   from {
     opacity: 0;
-    transform: translateY(9px);
+    transform: translate3d(0, 18px, 0) scale(.995);
+    filter: blur(2px);
   }
   to {
     opacity: 1;
-    transform: none;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
   }
 }
 
@@ -1666,4 +1672,406 @@ tbody tr:hover { background: rgba(0,180,216,.07); }
 
 @media (prefers-reduced-motion: reduce) {
   body::before, body::after { animation: none !important; }
+}
+
+
+/* Lenis integration: native scrolling remains the fallback. */
+html.has-lenis {
+  scroll-behavior: auto !important;
+}
+
+html.has-lenis,
+html.has-lenis body {
+  min-height: 100%;
+}
+
+html.has-lenis.lenis,
+html.has-lenis.lenis body {
+  height: auto;
+}
+
+html.has-lenis.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+html.has-lenis.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.has-lenis,
+  html.has-lenis body {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ========================================================================
+   MANUSACARE — refined depth & dimensional lighting
+   Adds physical separation and restrained 3D lift without changing layout.
+   ======================================================================== */
+
+:root {
+  --depth-shadow-soft: 0 8px 22px -14px rgba(0, 4, 24, .72),
+                      0 24px 52px -34px rgba(0, 4, 24, .88);
+  --depth-shadow-card: 0 1px 0 rgba(255,255,255,.10) inset,
+                       0 -1px 0 rgba(0,0,0,.18) inset,
+                       0 8px 16px -10px rgba(0,5,28,.58),
+                       0 24px 52px -30px rgba(0,5,28,.92);
+  --depth-shadow-raised: 0 1px 0 rgba(255,255,255,.13) inset,
+                         0 -1px 0 rgba(0,0,0,.2) inset,
+                         0 12px 24px -14px rgba(0,5,28,.72),
+                         0 34px 72px -38px rgba(0,5,28,.98);
+}
+
+/* Clear foreground / background separation. Keep text and controls sharp. */
+.page-shell {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+}
+
+.site-nav {
+  box-shadow: 0 1px 0 rgba(202,240,248,.08) inset,
+              0 12px 28px -18px rgba(0,4,24,.78),
+              0 28px 58px -42px rgba(0,4,24,.92);
+}
+
+.content-card,
+.stat-card,
+.table-wrap,
+.data-table-wrap,
+.guide-card,
+.auth-card,
+.stage-frame,
+.modal-panel,
+.notice,
+.shortcut,
+.filter-panel,
+.detail-panel,
+.feature-card,
+.process-step,
+.faq-item,
+.officer-card,
+.repair-control-card,
+.repair-progress-card {
+  position: relative;
+  box-shadow: var(--depth-shadow-card);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* A fine top-edge reflection gives glass surfaces a readable physical rim. */
+.content-card::after,
+.stat-card::after,
+.guide-card::after,
+.auth-card::after,
+.stage-frame::after,
+.modal-panel::after,
+.feature-card::after,
+.officer-card::after,
+.repair-control-card::after,
+.repair-progress-card::after {
+  content: "";
+  position: absolute;
+  inset: 0 1px auto;
+  height: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(202,240,248,.22), transparent);
+  opacity: .72;
+}
+
+.button-primary,
+.button-ghost,
+.button-quiet,
+.icon-button,
+.sound-toggle {
+  box-shadow: 0 1px 0 rgba(255,255,255,.13) inset,
+              0 -1px 0 rgba(0,0,0,.12) inset,
+              0 5px 12px -8px rgba(0,4,24,.72),
+              0 14px 26px -18px rgba(0,4,24,.88);
+}
+
+.button-primary:hover,
+.button-ghost:hover,
+.button-quiet:hover,
+.icon-button:hover,
+.sound-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 1px 0 rgba(255,255,255,.18) inset,
+              0 9px 18px -12px rgba(0,4,24,.78),
+              0 20px 34px -22px rgba(0,4,24,.94);
+}
+
+.brand-mark,
+.shortcut-icon,
+.feature-icon,
+.report-icon {
+  filter: drop-shadow(0 5px 8px rgba(0,5,28,.28));
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .content-card,
+  .stat-card,
+  .guide-card,
+  .feature-card,
+  .process-step,
+  .faq-item,
+  .officer-card,
+  .repair-control-card,
+  .repair-progress-card {
+    transition: transform 260ms cubic-bezier(.2,.75,.25,1),
+                box-shadow 260ms cubic-bezier(.2,.75,.25,1),
+                border-color 260ms ease;
+    transform-style: preserve-3d;
+  }
+
+  .content-card:hover,
+  .stat-card:hover,
+  .guide-card:hover,
+  .feature-card:hover,
+  .process-step:hover,
+  .faq-item:hover,
+  .officer-card:hover,
+  .repair-control-card:hover,
+  .repair-progress-card:hover {
+    transform: perspective(900px) translateY(-3px) rotateX(.35deg);
+    box-shadow: var(--depth-shadow-raised);
+    border-color: rgba(144,224,239,.3);
+  }
+
+  .stage-frame:hover {
+    box-shadow: 0 1px 0 rgba(255,255,255,.12) inset,
+                0 18px 34px -20px rgba(0,5,28,.8),
+                0 42px 86px -44px rgba(0,5,28,.98);
+  }
+}
+
+/* Keep the visual depth restrained on smaller / lower-power devices. */
+@media (max-width: 760px) {
+  .content-card,
+  .stat-card,
+  .guide-card,
+  .auth-card,
+  .feature-card,
+  .officer-card,
+  .repair-control-card,
+  .repair-progress-card {
+    box-shadow: 0 1px 0 rgba(255,255,255,.08) inset,
+                0 10px 26px -20px rgba(0,5,28,.82);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content-card,
+  .stat-card,
+  .guide-card,
+  .feature-card,
+  .process-step,
+  .faq-item,
+  .officer-card,
+  .repair-control-card,
+  .repair-progress-card,
+  .button-primary,
+  .button-ghost,
+  .button-quiet,
+  .icon-button,
+  .sound-toggle {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* ========================================================================
+   MANUSACARE — contrast-aware ambient lighting (v6)
+   Dark surfaces receive visible cyan/blue glow; bright surfaces cast depth.
+   ======================================================================== */
+
+:root {
+  --ambient-cyan: rgba(0, 180, 216, .34);
+  --ambient-blue: rgba(0, 119, 182, .28);
+  --ambient-ice: rgba(144, 224, 239, .24);
+  --shadow-ink: rgba(0, 3, 22, .78);
+}
+
+/* The page background is intentionally dark, so its light comes from within. */
+body {
+  background:
+    radial-gradient(ellipse 34rem 28rem at 8% 16%, rgba(0, 119, 182, .27), transparent 72%),
+    radial-gradient(ellipse 38rem 30rem at 88% 22%, rgba(0, 180, 216, .22), transparent 72%),
+    radial-gradient(ellipse 42rem 30rem at 54% 78%, rgba(3, 4, 94, .34), transparent 74%),
+    radial-gradient(ellipse 28rem 22rem at 4% 88%, rgba(0, 180, 216, .13), transparent 72%),
+    linear-gradient(145deg, #03045e 0%, #06152b 38%, #04101e 72%, #030a17 100%);
+  background-attachment: fixed;
+}
+
+/* Larger, clearer ambient light pools behind the interface. */
+body::before {
+  width: min(58vw, 760px);
+  height: min(58vw, 760px);
+  top: 2vh;
+  right: -16vw;
+  filter: blur(88px);
+  opacity: .78;
+  background: radial-gradient(circle,
+    rgba(0, 180, 216, .46) 0%,
+    rgba(0, 119, 182, .22) 38%,
+    rgba(0, 119, 182, .06) 60%,
+    transparent 74%);
+}
+
+body::after {
+  width: min(52vw, 680px);
+  height: min(52vw, 680px);
+  left: -18vw;
+  top: 42vh;
+  filter: blur(92px);
+  opacity: .68;
+  background: radial-gradient(circle,
+    rgba(144, 224, 239, .32) 0%,
+    rgba(0, 180, 216, .16) 42%,
+    rgba(3, 4, 94, .08) 62%,
+    transparent 76%);
+}
+
+/* Dark glass: add a colored rim and ambient bounce, not another black shadow. */
+.content-card,
+.stat-card,
+.table-wrap,
+.data-table-wrap,
+.guide-card,
+.auth-card,
+.stage-frame,
+.modal-panel,
+.notice,
+.shortcut,
+.filter-panel,
+.detail-panel,
+.feature-card,
+.process-step,
+.faq-item,
+.officer-card,
+.repair-control-card,
+.repair-progress-card {
+  border-color: rgba(144, 224, 239, .25);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, .13) inset,
+    0 -1px 0 rgba(0, 4, 30, .28) inset,
+    0 0 0 1px rgba(0, 180, 216, .055),
+    0 0 24px -12px rgba(0, 180, 216, .34),
+    0 18px 42px -28px rgba(0, 3, 22, .92),
+    0 34px 72px -46px rgba(0, 3, 22, .98);
+}
+
+/* A restrained luminous edge makes dark panels readable against dark pages. */
+.content-card::after,
+.stat-card::after,
+.guide-card::after,
+.auth-card::after,
+.stage-frame::after,
+.modal-panel::after,
+.feature-card::after,
+.officer-card::after,
+.repair-control-card::after,
+.repair-progress-card::after {
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(0, 180, 216, .18) 18%,
+    rgba(202, 240, 248, .62) 50%,
+    rgba(0, 180, 216, .18) 82%,
+    transparent 100%);
+  opacity: .9;
+}
+
+/* Bright controls and marks receive a real cast shadow below the surface. */
+.button-primary,
+.brand-mark,
+.stat-card::before {
+  filter: drop-shadow(0 7px 12px rgba(0, 3, 22, .34));
+}
+
+.button-primary {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, .82) inset,
+    0 -1px 0 rgba(0, 48, 88, .2) inset,
+    0 9px 18px -10px rgba(0, 3, 22, .76),
+    0 18px 34px -18px rgba(0, 3, 22, .82),
+    0 0 24px -14px rgba(144, 224, 239, .75);
+}
+
+.button-primary:hover {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, .9) inset,
+    0 13px 22px -11px rgba(0, 3, 22, .78),
+    0 24px 42px -20px rgba(0, 3, 22, .88),
+    0 0 30px -12px rgba(144, 224, 239, .82);
+}
+
+.brand-mark {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, .7) inset,
+    0 9px 18px -9px rgba(0, 3, 22, .72),
+    0 18px 30px -17px rgba(0, 3, 22, .82),
+    0 0 26px -12px rgba(0, 180, 216, .78);
+}
+
+/* Navigation floats above the page with both a cool rim and deep cast shadow. */
+.site-nav,
+.site-nav.is-scrolled {
+  border-bottom-color: rgba(144, 224, 239, .24);
+  box-shadow:
+    0 1px 0 rgba(202, 240, 248, .12) inset,
+    0 12px 28px -14px rgba(0, 3, 22, .74),
+    0 26px 56px -30px rgba(0, 3, 22, .92),
+    0 0 28px -20px rgba(0, 180, 216, .46);
+}
+
+/* Inputs stay dark, but their focus state is visibly illuminated. */
+input:focus,
+select:focus,
+textarea:focus {
+  box-shadow:
+    0 0 0 3px rgba(0, 180, 216, .16),
+    0 0 22px -7px rgba(0, 180, 216, .72),
+    0 0 38px -16px rgba(144, 224, 239, .5);
+}
+
+@media (max-width: 760px) {
+  body { background-attachment: scroll; }
+  body::before,
+  body::after {
+    filter: blur(72px);
+    opacity: .46;
+  }
+  .content-card,
+  .stat-card,
+  .table-wrap,
+  .data-table-wrap,
+  .guide-card,
+  .auth-card,
+  .stage-frame,
+  .modal-panel,
+  .notice,
+  .shortcut,
+  .filter-panel,
+  .detail-panel,
+  .feature-card,
+  .process-step,
+  .faq-item,
+  .officer-card,
+  .repair-control-card,
+  .repair-progress-card {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, .1) inset,
+      0 0 18px -12px rgba(0, 180, 216, .32),
+      0 12px 26px -18px rgba(0, 3, 22, .88);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none !important;
+  }
 }
